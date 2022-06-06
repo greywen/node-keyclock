@@ -1,0 +1,11 @@
+{
+  "keycloak": {
+    "issuer": "",
+    "client_id": "",
+    "client_secret": "",
+    "response_types": ["code"],
+    "redirect_uris": ["http://localhost:3000/"],
+    "login_redirect_url": "http://localhost:3000/",
+    "logout_redirect_url": "http://localhost:3000/authorizationurl"
+  }
+}
