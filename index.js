@@ -5,10 +5,7 @@ class NodeKeycloak {
     /**
      * 配置Keycloak相关信息
      * @param issuer eg: https://identity.keycloak.org/realms/master/
-     * @param client_id
-     * @param client_secret
-     * @param redirect_uris 登录成功返回URL，URL将会携带code,session_state等参数
-     * @param response_types
+     * @param response_types default: ['code']
      * @returns
      */
     static async configure(parameters) {
@@ -17,7 +14,7 @@ class NodeKeycloak {
             client_id: parameters.client_id,
             client_secret: parameters.client_secret,
             redirect_uris: parameters.redirect_uris,
-            response_types: parameters.response_types,
+            response_types: parameters.response_types || ['code'],
         });
     }
     /**
@@ -30,21 +27,19 @@ class NodeKeycloak {
     /**
      * 登录
      * @param code
-     * @param state
      * @param session_state
-     * @returns 返回Token 用户信息
+     * @returns 返回 Token / 用户信息
      */
-    static async signin(parameters) {
+    static async callback(parameters) {
         const { login_redirect_uri, code } = parameters;
         return await NodeKeycloak.client.callback(login_redirect_uri, {
             code: parameters.code,
-            state: parameters.state,
             session_state: parameters.session_state,
         });
     }
     /**
      * 登出
-     * @param post_logout_redirect_uri 退出之后重定向URL
+     * @param post_logout_redirect_uri 退出后重定向URL
      * @returns
      */
     static async signout(id_token_hint, post_logout_redirect_uri) {

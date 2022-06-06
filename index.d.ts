@@ -8,25 +8,26 @@ interface IClientParameters {
     redirect_uris?: string[];
     response_types?: ResponseType[];
 }
-interface ISigninParameters {
+interface ICallbackParameters {
+    /**
+     * 授权成功重定向URL 前端地址
+     */
     login_redirect_uri: string;
     code: string;
-    state?: string;
-    session_state?: string;
+    session_state: string;
 }
 interface IAuthorizationParameters {
+    /**
+     * keycloak登录完成后重定向URL（可以重定向到前端地址/也可以是后台API地址）
+     */
     redirect_uri?: string;
-    max_age?: number;
 }
 declare class NodeKeycloak {
     private static client;
     /**
      * 配置Keycloak相关信息
      * @param issuer eg: https://identity.keycloak.org/realms/master/
-     * @param client_id
-     * @param client_secret
-     * @param redirect_uris 登录成功返回URL，URL将会携带code,session_state等参数
-     * @param response_types
+     * @param response_types default: ['code']
      * @returns
      */
     static configure(parameters: IClientParameters): Promise<void>;
@@ -38,14 +39,13 @@ declare class NodeKeycloak {
     /**
      * 登录
      * @param code
-     * @param state
      * @param session_state
-     * @returns 返回Token 用户信息
+     * @returns 返回 Token / 用户信息
      */
-    static signin(parameters: ISigninParameters): Promise<TokenSet>;
+    static callback(parameters: ICallbackParameters): Promise<TokenSet>;
     /**
      * 登出
-     * @param post_logout_redirect_uri 退出之后重定向URL
+     * @param post_logout_redirect_uri 退出后重定向URL
      * @returns
      */
     static signout(id_token_hint: string, post_logout_redirect_uri?: string | undefined): Promise<string>;
