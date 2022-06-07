@@ -1,55 +1,41 @@
 /// <reference types="node" />
 import { TokenSet, RefreshExtras } from 'openid-client';
 import * as crypto from 'crypto';
-interface IClientParameters {
+interface INodeKeycloakConfig {
     issuer: string;
     client_id: string;
+    login_redirect_uri: string;
+    logout_redirect_uri?: string;
     client_secret?: string;
-    redirect_uris?: string[];
     response_types?: ResponseType[];
 }
 interface ICallbackParameters {
-    /**
-     * 授权成功重定向URL 前端地址
-     */
-    login_redirect_uri: string;
     code: string;
     session_state: string;
 }
-interface IAuthorizationParameters {
-    /**
-     * keycloak登录完成后重定向URL（可以重定向到前端地址/也可以是后台API地址）
-     */
-    redirect_uri?: string;
-}
 declare class NodeKeycloak {
     private static client;
+    private static configs;
     /**
-     * 配置Keycloak相关信息
+     * Configure keyloak
      * @param issuer eg: https://identity.keycloak.org/realms/master/
+     * @param client_id
+     * @param login_redirect_uri Redirect URI after keycloak login succeed
      * @param response_types default: ['code']
      * @returns
      */
-    static configure(parameters: IClientParameters): Promise<void>;
+    static configure(configs: INodeKeycloakConfig): Promise<void>;
+    static authorizationUrl(): Promise<string>;
     /**
-     * 获取Keycloak登录界面URL
-     * @returns 返回Keycloak登录界面URL
-     */
-    static authorizationUrl(parameters?: IAuthorizationParameters): Promise<string>;
-    /**
-     * 登录
+     * @param redirect_uri Must be with authorizationurl redirect_uri consistent
      * @param code
      * @param session_state
-     * @returns 返回 Token / 用户信息
+     * @returns Promise<TokenSet>
      */
     static callback(parameters: ICallbackParameters): Promise<TokenSet>;
-    /**
-     * 登出
-     * @param post_logout_redirect_uri 退出后重定向URL
-     * @returns
-     */
-    static signout(id_token_hint: string, post_logout_redirect_uri?: string | undefined): Promise<string>;
+    static signout(id_token_hint: string): Promise<string>;
     static refresh(refreshToken: string | TokenSet, extras?: RefreshExtras | undefined): Promise<TokenSet>;
+    static introspect(token: string): Promise<import("openid-client").IntrospectionResponse>;
     static userinfo(accessToken: string | TokenSet, options?: {
         method?: 'GET' | 'POST';
         via?: 'header' | 'body';

@@ -10,16 +10,12 @@ interface IKeyCloakConfig {
   issuer: string;
   client_id: string;
   client_secret: string;
-  response_types: string[];
-  redirect_uris: string[];
   login_redirect_url: string;
   logout_redirect_url: string;
 }
 
 app.get('/', async (req, res) => {
-  const url = await NodeKeycloak.authorizationUrl({
-    redirect_uri: configs.login_redirect_url,
-  });
+  const url = await NodeKeycloak.authorizationUrl();
   res.writeHead(302, {
     location: url,
   });
@@ -31,11 +27,12 @@ app.get('/callback', async (req, res) => {
     req.query
   );
   const result = await NodeKeycloak.callback({
-    login_redirect_uri: configs.login_redirect_url,
     code: code,
     session_state: session_state,
   });
-  const userinfo = await NodeKeycloak.userinfo(result!.access_token as string);
+  const userinfo = await NodeKeycloak.userinfo(result!.access_token as string, {
+    method: 'GET',
+  });
   res.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' });
   res.write(`
   <h3>Login successful!</h3>
@@ -50,11 +47,17 @@ app.get('/callback', async (req, res) => {
 
 app.get('/signout', async (req, res) => {
   const token = req.query.token as string;
-  const url = await NodeKeycloak.signout(token, configs.logout_redirect_url);
+  const url = await NodeKeycloak.signout(token);
   res.writeHead(302, {
     location: url,
   });
   res.end();
+});
+
+app.get('/introspect', async (req, res) => {
+  const token = req.query.token as string;
+  const result = await NodeKeycloak.introspect(token);
+  res.send(result);
 });
 
 async function start() {
@@ -62,6 +65,7 @@ async function start() {
     issuer: configs.issuer,
     client_id: configs.client_id,
     client_secret: configs.client_secret,
+    login_redirect_uri: configs.login_redirect_url,
   });
   app.listen(port, () => console.log(`App listening on port ${port}`));
 }
