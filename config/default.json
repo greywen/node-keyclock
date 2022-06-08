@@ -1,7 +1,7 @@
 {
   "keycloak": {
-    "issuer": "",
-    "client_id": "",
+    "issuer": "https://keycloak.org/realms/master/",
+    "client_id": "my-client",
     "client_secret": "",
     "login_redirect_url": "http://localhost:3000/callback",
     "logout_redirect_url": "http://localhost:3000/"
