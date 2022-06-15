@@ -1,4 +1,10 @@
-import { Issuer, BaseClient, TokenSet, RefreshExtras } from 'openid-client';
+import {
+  Issuer,
+  BaseClient,
+  TokenSet,
+  RefreshExtras,
+  IntrospectionResponse,
+} from 'openid-client';
 import * as crypto from 'crypto';
 
 interface INodeKeycloakConfig {
@@ -70,7 +76,7 @@ class NodeKeycloak {
     return NodeKeycloak.client.refresh(refreshToken, extras);
   }
 
-  static async introspect(token: string) {
+  static async introspect(token: string): Promise<IntrospectionResponse> {
     return NodeKeycloak.client.introspect(token);
   }
 

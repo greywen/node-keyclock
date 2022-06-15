@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { TokenSet, RefreshExtras } from 'openid-client';
+import { TokenSet, RefreshExtras, IntrospectionResponse } from 'openid-client';
 import * as crypto from 'crypto';
 interface INodeKeycloakConfig {
     issuer: string;
@@ -35,7 +35,7 @@ declare class NodeKeycloak {
     static callback(parameters: ICallbackParameters): Promise<TokenSet>;
     static signout(id_token_hint: string): Promise<string>;
     static refresh(refreshToken: string | TokenSet, extras?: RefreshExtras | undefined): Promise<TokenSet>;
-    static introspect(token: string): Promise<import("openid-client").IntrospectionResponse>;
+    static introspect(token: string): Promise<IntrospectionResponse>;
     static userinfo(accessToken: string | TokenSet, options?: {
         method?: 'GET' | 'POST';
         via?: 'header' | 'body';
