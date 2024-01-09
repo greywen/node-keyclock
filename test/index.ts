@@ -16,6 +16,7 @@ interface IKeyCloakConfig {
 
 app.get('/', async (req, res) => {
   const url = await NodeKeycloak.authorizationUrl();
+  console.log('url', url);
   res.writeHead(302, {
     location: url,
   });
@@ -23,12 +24,14 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/callback', async (req, res) => {
-  const { code, session_state } = <{ code: string; session_state: string }>(
-    req.query
-  );
+  const { code, session_state, iss } = <
+    { code: string; session_state: string; iss: string }
+  >req.query;
+  console.log('req.query', req.query);
   const result = await NodeKeycloak.callback({
-    code: code,
-    session_state: session_state,
+    iss,
+    code,
+    session_state,
   });
   const userinfo = await NodeKeycloak.userinfo(result!.access_token as string, {
     method: 'GET',

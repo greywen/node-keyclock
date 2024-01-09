@@ -31,10 +31,11 @@ class NodeKeycloak {
      * @returns Promise<TokenSet>
      */
     static async callback(parameters) {
-        const { code, session_state } = parameters;
+        const { code, session_state, iss } = parameters;
         return await NodeKeycloak.client.callback(this.configs.login_redirect_uri, {
-            code: code,
-            session_state: session_state,
+            iss,
+            code,
+            session_state,
         });
     }
     static async signout(id_token_hint) {

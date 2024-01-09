@@ -19,6 +19,7 @@ interface INodeKeycloakConfig {
 interface ICallbackParameters {
   code: string;
   session_state: string;
+  iss: string;
 }
 
 class NodeKeycloak {
@@ -55,10 +56,11 @@ class NodeKeycloak {
    * @returns Promise<TokenSet>
    */
   static async callback(parameters: ICallbackParameters): Promise<TokenSet> {
-    const { code, session_state } = parameters;
+    const { code, session_state, iss } = parameters;
     return await NodeKeycloak.client.callback(this.configs.login_redirect_uri, {
-      code: code,
-      session_state: session_state,
+      iss,
+      code,
+      session_state,
     });
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "node-keycloak",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "The node keycloak is simply packaged.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -21,7 +21,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:graywenn/node-keyclock.git"
+    "url": "git@github.com:greywen/node-keyclock.git"
   },
   "files": [
     "index.js",

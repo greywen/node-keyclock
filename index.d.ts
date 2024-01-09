@@ -12,6 +12,7 @@ interface INodeKeycloakConfig {
 interface ICallbackParameters {
     code: string;
     session_state: string;
+    iss: string;
 }
 declare class NodeKeycloak {
     private static client;
